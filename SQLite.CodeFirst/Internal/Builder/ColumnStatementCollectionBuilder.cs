@@ -42,6 +42,7 @@ namespace SQLite.CodeFirst.Builder
                 AdjustDatatypeForAutogenerationIfNecessary(property, columnStatement);
                 AddNullConstraintIfNecessary(property, columnStatement);
                 AddUniqueConstraintIfNecessary(property, columnStatement);
+                AddCaseSensitiveConstraintIfNecessary(property, columnStatement);
                 AddCollationConstraintIfNecessary(property, columnStatement, defaultCollation);
                 AddPrimaryKeyConstraintAndAdjustTypeIfNecessary(property, columnStatement);
                 AddDefaultValueConstraintIfNecessary(property, columnStatement);
@@ -128,6 +129,15 @@ namespace SQLite.CodeFirst.Builder
             var primaryKeyConstraint = new PrimaryKeyConstraint();
             primaryKeyConstraint.Autoincrement = property.GetCustomAnnotation<AutoincrementAttribute>() != null;
             columnStatement.ColumnConstraints.Add(primaryKeyConstraint);
+        }
+
+        private static void AddCaseSensitiveConstraintIfNecessary(EdmProperty property, ColumnStatement columnStatement)
+        {
+            var attribute = property.GetCustomAnnotation<CaseSensitiveAttribute>();
+            if (attribute != null)
+            {
+                columnStatement.ColumnConstraints.Add(new CaseSensitiveConstraint { IsCaseSensitive = attribute.IsCaseSensitive });
+            }
         }
 
         private static void ConvertIntegerType(ColumnStatement columnStatement)

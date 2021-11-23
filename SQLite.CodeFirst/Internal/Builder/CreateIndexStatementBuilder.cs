@@ -39,6 +39,7 @@ namespace SQLite.CodeFirst.Builder
                         createIndexStatement = new CreateIndexStatement
                         {
                             IsUnique = index.IsUnique,
+                            IsCaseSensitive = edmProperty.GetCustomAnnotation<CaseSensitiveAttribute>()?.IsCaseSensitive ?? true,
                             Name = indexName,
                             Table = tableName,
                             Columns = new Collection<CreateIndexStatement.IndexColumn>()

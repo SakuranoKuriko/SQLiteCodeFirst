@@ -8,13 +8,14 @@ namespace SQLite.CodeFirst.Statement
 {
     internal class CreateIndexStatement : IStatement
     {
-        private const string Template = "CREATE {unique} INDEX {index-name} ON {table-name} ({column-def});";
+        private const string Template = "CREATE {unique} INDEX {index-name} ON {table-name} ({column-def}{case-sensitive});";
         private const string ColumnNameSeperator = ", ";
 
         public string Name { get; set; }
         public string Table { get; set; }
         public ICollection<IndexColumn> Columns { get; set; }
         public bool IsUnique { get; set; }
+        public bool IsCaseSensitive { get; set; }
 
         public string CreateStatement()
         {
@@ -27,6 +28,7 @@ namespace SQLite.CodeFirst.Statement
             IEnumerable<string> orderedColumnNames = Columns.OrderBy(c => c.Order).Select(c => c.Name).Select(NameCreator.EscapeName);
             string columnDefinition = String.Join(ColumnNameSeperator, orderedColumnNames);
             stringBuilder.Replace("{column-def}", columnDefinition);
+            stringBuilder.Replace("{case-sensitive}", IsCaseSensitive ? String.Empty : " COLLATE NOCASE");
 
             return stringBuilder.ToString();
         }
